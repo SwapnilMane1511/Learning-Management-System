@@ -14,10 +14,10 @@ import { useEditLectureMutation, useGetLectureByIdQuery, useRemoveLectureMutatio
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom"; 
 import { toast } from "sonner";
-
-const MEDIA_API = "http://localhost:8080/api/v1/media";
+const BASE_URL = process.env.BASE_URL;
+const MEDIA_API = `${BASE_URL}`;
 
 const LectureTab = () => {
   const [lectureTitle, setLectureTitle] = useState("");
