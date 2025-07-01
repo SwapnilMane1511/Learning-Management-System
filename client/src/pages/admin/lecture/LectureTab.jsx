@@ -17,7 +17,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"; 
 import { toast } from "sonner";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-const MEDIA_API = `${BASE_URL}`;
+const MEDIA_API =`${BASE_URL}/api/v1/media`;
 
 const LectureTab = () => {
   const [lectureTitle, setLectureTitle] = useState("");
