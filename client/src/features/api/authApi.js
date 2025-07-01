@@ -1,7 +1,12 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import { userLoggedIn, userLoggedOut } from "../authSlice";
+<<<<<<< HEAD
 
 const USER_API = "https://learning-management-system-tjlw.onrender.com/api/v1/user/"
+=======
+const BASE_URL = process.env.BASE_URL;
+const USER_API = `${BASE_URL}/user/`
+>>>>>>> eaf002b851162f591b0a79f360f53f3d8ce0d915
 
 export const authApi = createApi({
     reducerPath:"authApi",
