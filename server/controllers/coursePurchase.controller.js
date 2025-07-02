@@ -88,13 +88,12 @@ export const stripeWebhook = async (req, res) => {
     try {
       const session = event.data.object;
 
-      const purchase = await CoursePurchase.findOne({ paymentId: session.id }).populate({
-        path: "courseId",
-      });
+    const purchase = await CoursePurchase.findOne({ paymentId: session.id }).populate("courseId").populate("userId");
 
-      if (!purchase) {
-        return res.status(404).json({ message: "Purchase not found" });
-      }
+
+     if (!purchase || !purchase.userId || !purchase.courseId) {
+  return res.status(404).json({ message: "Purchase/user/course not found" });
+}
 
       // Update purchase
       purchase.amount = session.amount_total / 100;
