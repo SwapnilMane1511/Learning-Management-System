@@ -19,12 +19,15 @@ import {
   useLoadUserQuery,
   useUpdateUserMutation,
 } from "@/features/api/authApi";
+import { useGetPurchasedCoursesQuery } from "@/features/api/purchaseApi";
 
 const Profile = () => {
   const [name, setName] = useState("");
   const [profilePhoto, setProfilePhoto] = useState(null);
 
-  const { data, isLoading, refetch } = useLoadUserQuery();
+  const { data: userData, isLoading: isUserLoading, refetch } = useLoadUserQuery();
+  const { data: purchasedData, isLoading: isPurchasedLoading } = useGetPurchasedCoursesQuery();
+
   const [
     updateUser,
     {
@@ -62,16 +65,18 @@ const Profile = () => {
     await updateUser(formData);
   };
 
-  if (isLoading) return <h1 className="text-center mt-10">Profile Loading...</h1>;
+  if (isUserLoading || isPurchasedLoading) return <h1 className="text-center mt-10">Loading Profile...</h1>;
 
-  const user = data?.user;
-  const enrolledCourses = user?.enrolledCourses?.filter((course) => course !== null) || [];
+  const user = userData?.user;
+  const enrolledCourses = purchasedData?.purchasedCourse
+    ?.map((item) => item.courseId)
+    ?.filter((course) => course !== null) || [];
 
   return (
     <div className="max-w-4xl mx-auto px-4 my-24">
       <h1 className="font-bold text-2xl text-center md:text-left">PROFILE</h1>
 
-      {/* User Info Section */}
+      {/* User Info */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-8 my-5">
         <div className="flex flex-col items-center">
           <Avatar className="h-24 w-24 md:h-32 md:w-32 mb-4">
@@ -112,7 +117,7 @@ const Profile = () => {
             </h1>
           </div>
 
-          {/* Edit Profile Dialog */}
+          {/* Edit Dialog */}
           <Dialog>
             <DialogTrigger asChild>
               <Button size="sm" className="mt-2">
@@ -164,7 +169,7 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Enrolled Courses */}
+      {/* Purchased Courses */}
       <div>
         <h1 className="font-medium text-lg mb-3">Courses you're enrolled in</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

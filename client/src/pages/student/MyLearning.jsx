@@ -5,9 +5,7 @@ import { useGetPurchasedCoursesQuery } from "@/features/api/purchaseApi";
 const MyLearning = () => {
   const { data, isLoading } = useGetPurchasedCoursesQuery();
 
-  const myLearning = (data?.purchasedCourse || [])
-    .map(p => p.courseId)
-    .filter(course => course !== null);
+  const purchasedCourses = data?.purchasedCourse?.map(p => p.courseId).filter(Boolean) || [];
 
   return (
     <div className="max-w-4xl mx-auto my-10 px-4 md:px-0">
@@ -15,12 +13,12 @@ const MyLearning = () => {
       <div className="my-5">
         {isLoading ? (
           <MyLearningSkeleton />
-        ) : myLearning.length === 0 ? (
+        ) : purchasedCourses.length === 0 ? (
           <p>You are not enrolled in any course.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {myLearning.map((course) => (
-              <Course course={course} key={course._id} />
+            {purchasedCourses.map((course) => (
+              course && <Course course={course} key={course._id} />
             ))}
           </div>
         )}
