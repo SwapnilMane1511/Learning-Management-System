@@ -18,6 +18,7 @@ import {
   useLoadUserQuery,
   useUpdateUserMutation,
 } from "@/features/api/authApi";
+import { useGetPurchasedCoursesQuery } from "@/features/api/purchaseApi";
 import { toast } from "sonner";
 
 const Profile = () => {
@@ -25,6 +26,11 @@ const Profile = () => {
   const [profilePhoto, setProfilePhoto] = useState("");
 
   const { data, isLoading, refetch } = useLoadUserQuery();
+  const {
+    data: purchasedData,
+    isLoading: isPurchasedLoading,
+  } = useGetPurchasedCoursesQuery();
+
   const [
     updateUser,
     {
@@ -35,8 +41,6 @@ const Profile = () => {
       isSuccess,
     },
   ] = useUpdateUserMutation();
-
-  console.log(data);
 
   const onChangeHandler = (e) => {
     const file = e.target.files?.[0];
@@ -66,10 +70,8 @@ const Profile = () => {
 
   if (isLoading) return <h1>Profile Loading...</h1>;
 
-  const user = data && data.user;
-
-  console.log(user);
-  
+  const user = data?.user;
+  const purchasedCourses = purchasedData?.purchasedCourse?.map(p => p.courseId) || [];
 
   return (
     <div className="max-w-4xl mx-auto px-4 my-24">
@@ -79,9 +81,9 @@ const Profile = () => {
           <Avatar className="h-24 w-24 md:h-32 md:w-32 mb-4">
             <AvatarImage
               src={user?.photoUrl || "https://tse1.mm.bing.net/th?id=OIP.JI82FNKJMOX_56pzAY-TjQHaHa&pid=Api&P=0&h=180"}
-              alt="@shadcn"
+              alt="User"
             />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
           </Avatar>
         </div>
         <div>
@@ -111,16 +113,13 @@ const Profile = () => {
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button size="sm" className="mt-2">
-                Edit Profile
-              </Button>
+              <Button size="sm" className="mt-2">Edit Profile</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Edit Profile</DialogTitle>
                 <DialogDescription>
-                  Make changes to your profile here. Click save when you're
-                  done.
+                  Make changes to your profile here. Click save when you're done.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -151,8 +150,7 @@ const Profile = () => {
                 >
                   {updateUserIsLoading ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please
-                      wait
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
                     </>
                   ) : (
                     "Save Changes"
@@ -163,13 +161,16 @@ const Profile = () => {
           </Dialog>
         </div>
       </div>
+
       <div>
         <h1 className="font-medium text-lg">Courses you're enrolled in</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5">
-          {user.enrolledCourses.length === 0 ? (
+          {isPurchasedLoading ? (
+            <p>Loading courses...</p>
+          ) : purchasedCourses.length === 0 ? (
             <h1>You haven't enrolled yet</h1>
           ) : (
-            user.enrolledCourses.map((course) => (
+            purchasedCourses.map((course) => (
               <Course course={course} key={course._id} />
             ))
           )}

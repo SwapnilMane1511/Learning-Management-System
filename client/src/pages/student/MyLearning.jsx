@@ -1,15 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Course from "./Course";
-import { useLoadUserQuery } from "@/features/api/authApi";
+import { useGetPurchasedCoursesQuery } from "@/features/api/purchaseApi";
 
 const MyLearning = () => {
-  const { data, isLoading, refetch } = useLoadUserQuery();
+  const { data, isLoading } = useGetPurchasedCoursesQuery();
 
-  useEffect(() => {
-    refetch();
-  }, []);
-
-  const myLearning = data?.user?.enrolledCourses || [];
+  const myLearning = data?.purchasedCourse?.map(p => p.courseId) || [];
 
   return (
     <div className="max-w-4xl mx-auto my-10 px-4 md:px-0">
