@@ -154,21 +154,21 @@ export const getCourseDetailWithPurchaseStatus = async (req, res) => {
     console.log(error);
   }
 };
-
-export const getAllPurchasedCourse = async (_, res) => {
+export const getAllPurchasedCourse = async (req, res) => {
   try {
+    const userId = req.id;
     const purchasedCourse = await CoursePurchase.find({
       status: "completed",
+      userId, // ✅ Only this user
     }).populate("courseId");
-    if (!purchasedCourse) {
-      return res.status(404).json({
-        purchasedCourse: [],
-      });
-    }
+
     return res.status(200).json({
-      purchasedCourse,
+      purchasedCourse: purchasedCourse || [],
     });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Failed to fetch purchased courses",
+    });
   }
 };
