@@ -5,7 +5,9 @@ import { useGetPurchasedCoursesQuery } from "@/features/api/purchaseApi";
 const MyLearning = () => {
   const { data, isLoading } = useGetPurchasedCoursesQuery();
 
-  const myLearning = data?.purchasedCourse?.map(p => p.courseId) || [];
+  const myLearning = (data?.purchasedCourse || [])
+    .map(p => p.courseId)
+    .filter(course => course !== null);
 
   return (
     <div className="max-w-4xl mx-auto my-10 px-4 md:px-0">
